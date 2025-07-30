@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【革命的】Webブラウザだけで完結するハイブリッド研修システム - CloudEduPro</title>
+    
+    <!-- Stripe JavaScript SDK -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Hiragino Sans', 'Yu Gothic', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3.5em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero .subtitle {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .cost-highlight {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            display: inline-block;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .cta-button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 20px 10px;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+        
+        .cta-secondary {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        
+        .section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .problem-section {
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .problem-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid #ff6b6b;
+        }
+        
+        .problem-card h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .solution-section {
+            text-align: center;
+        }
+        
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+        
+        .solution-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            transform: scale(1);
+            transition: all 0.3s ease;
+        }
+        
+        .solution-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        .solution-card .icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .comparison-section {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            color: #2d3436;
+        }
+        
+        .comparison-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+        
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        
+        .comparison-table td {
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .our-system {
+            background: #e8f5e8;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        
+        .features-section {
+            background: #f8f9fa;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .feature-card .icon {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        
+        .pricing-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .pricing-card {
+            background: white;
+            color: #333;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-card.recommended {
+            border: 3px solid #ff6b6b;
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.recommended::before {
+            content: 'おすすめ';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 30px;
+            transform: rotate(45deg);
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .price {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        
+        .price-note {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .faq-section {
+            background: #f8f9fa;
+        }
+        
+        .faq-item {
+            background: white;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .faq-question::after {
+            content: '+';
+            position: absolute;
+            right: 20px;
+            font-size: 1.5em;
+        }
+        
+        .faq-answer {
+            padding: 20px;
+            display: none;
+        }
+        
+        .testimonial-section {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            text-align: center;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .testimonial-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            font-size: 4em;
+            color: #667eea;
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            line-height: 1;
+        }
+        
+        .section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section h2::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background: #667eea;
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        footer {
+            background: #2d3436;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .contact-info {
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .section {
+                padding: 60px 20px;
+            }
+            
+            .pricing-card.recommended {
+                transform: none;
+            }
+        }
+        
+        /* テスト警告バナー */
+        .test-warning {
+            background: #ff4444;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .test-warning .blink {
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ⚠️ テスト警告バナー -->
+    <div class="test-warning">
+        <div class="blink">⚠️ これはテスト環境です - 実際の購入は行わないでください ⚠️</div>
+        <div style="font-size: 14px; margin-top: 5px;">決済テスト用サイトです。テストカード番号：4242 4242 4242 4242 をご利用ください</div>
+    </div>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <!-- 🔧 【TEMPORARY BACK LINK】後で削除予定 - Index.htmlへの戻りリンク -->
+        <div style="position: absolute; top: 20px; right: 20px; z-index: 10;">
+            <a href="javascript:history.back();" style="background: rgba(255,255,255,0.25); color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none; font-size: 14px; font-weight: 600; backdrop-filter: blur(5px); border: 2px solid rgba(255,255,255,0.4); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" 
+               onmouseover="this.style.background='rgba(255,255,255,0.4)'; this.style.transform='translateY(-2px)'" 
+               onmouseout="this.style.background='rgba(255,255,255,0.25)'; this.style.transform='translateY(0px)'">
+                ← 研修システムに戻る
+            </a>
+        </div>
+        <!-- 🔧 【END TEMPORARY BACK LINK】-->
+        
+        <div class="hero-content">
+            <h1>🚀 CloudEduPro</h1>
+            <p class="subtitle">お手持ちの動画・資料が、AIの力で研修コンテンツに生まれ変わる！</p>
+            <div style="font-size: 1.3em; margin: 30px 0; color: #fff; font-weight: 600;">
+                🎬 動画(MP4)による研修 + スライド(HTML)+音声解説(MP3)の融合研修<br>
+                📄 資料ドキュメント(PDF)+音声解説(MP3)による融合研修<br>
+                ✨ 過去に作ったHTML・PDF資料がAIの力で短期間で研修コンテンツとして蘇ります<br>
+                <span style="font-size: 0.9em; color: #ccc;">※AI機能は別途APIキー登録が必要です</span>
+            </div>
+            <div class="cost-highlight">
+                💰 月額4,980円〜 × お手持ち資料活用 = 超お手軽研修システム
+            </div>
+            <a href="#pricing" class="cta-button">今すぐ無料で始める</a>
+            <a href="#demo" class="cta-button cta-secondary">機能を詳しく見る</a>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); text-align: center; padding: 60px 20px;">
+        <h2 style="font-size: 2.5em; margin-bottom: 40px; color: #333;">🎉 個人から企業まで！あなた専用の研修プラットフォーム</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-left: 5px solid #667eea;">
+                <div style="font-size: 3em; margin-bottom: 15px;">📺</div>
+                <h3 style="color: #667eea; margin-bottom: 15px;">お手持ち資料が研修に変身</h3>
+                <p style="color: #666; line-height: 1.6;">動画(MP4)・スライド(HTML)+音声(MP3)・資料(PDF)+音声(MP3)。既存資料がAIの力で研修コンテンツに蘇ります。</p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-left: 5px solid #28a745;">
+                <div style="font-size: 3em; margin-bottom: 15px;">🌐</div>
+                <h3 style="color: #28a745; margin-bottom: 15px;">パソコンだけで簡単始められる</h3>
+                <p style="color: #666; line-height: 1.6;">特別なソフトのインストール不要。難しい設定も不要。インターネットにつながったパソコンだけで今すぐ始められます。</p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-left: 5px solid #ff6b6b;">
+                <div style="font-size: 3em; margin-bottom: 15px;">💰</div>
+                <h3 style="color: #ff6b6b; margin-bottom: 15px;">月額4,980円から</h3>
+                <p style="color: #666; line-height: 1.6;">個人コーチ・講師から企業まで始められる料金設計。規模に合わせて段階的にアップグレードできます。</p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-left: 5px solid #ffc107;">
+                <div style="font-size: 3em; margin-bottom: 15px;">🎯</div>
+                <h3 style="color: #ffc107; margin-bottom: 15px;">AIがテスト問題を自動作成</h3>
+                <p style="color: #666; line-height: 1.6;">AIがあなたの研修コンテンツを読み取って、理解度チェックのためのテスト問題を自動で作成。手間いらずで学習効果を測定できます。<br><span style="font-size: 0.9em; color: #999;">※別途APIキー登録が必要です</span></p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-left: 5px solid #17a2b8;">
+                <div style="font-size: 3em; margin-bottom: 15px;">📊</div>
+                <h3 style="color: #17a2b8; margin-bottom: 15px;">だれがどこまで進んだか一目でわかる</h3>
+                <p style="color: #666; line-height: 1.6;">各社員がどの研修をどこまで学習したか、AIが分析してレポートを作成。管理者は簡単に進捗状況を把握できます。<br><span style="font-size: 0.9em; color: #999;">※別途APIキー登録が必要です</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="section problem-section">
+        <h2>😰 個人・企業問わず、こんなお悩みありませんか？</h2>
+        <div class="problem-grid">
+            <div class="problem-card">
+                <h3>💻 特別なソフトをインストールしたり、難しい設定が必要</h3>
+                <p>「システムを使うために特別なソフトを入れないと...パソコンだけで簡単に使えるシステムがほしい」</p>
+            </div>
+            <div class="problem-card">
+                <h3>📹 動画しか使えないで、作った資料が死蔵</h3>
+                <p>「今まで作ったPDF資料やスライドが活用できない...これらを研修に使えるシステムがほしい」</p>
+            </div>
+            <div class="problem-card">
+                <h3>💰 動画配信・研修システムの料金が高すぎる</h3>
+                <p>「月額数十万円のシステム費用...個人や小さな会社でも気軽に始められる価格はないの？」</p>
+            </div>
+            <div class="problem-card">
+                <h3>🔧 動画配信・研修システムを始めるまでが大変</h3>
+                <p>「システムを使えるようになるまで数週間...専門知識が必要で今すぐ使い始められない」</p>
+            </div>
+            <div class="problem-card">
+                <h3>📝 テスト問題を作るのが大変</h3>
+                <p>「理解度チェックのテスト問題を作ったり、採点したりが手間...AIで自動化できないかな？」</p>
+            </div>
+            <div class="problem-card">
+                <h3>📊 だれがどこまで進んだかわからない</h3>
+                <p>「各社員がどの研修をどこまで学習したか把握できない...自動で詳細分析してくれるシステムがほしい」</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="section solution-section">
+        <h2>✨ CloudEduProなら、すべてのお悩みを解決！</h2>
+        <div class="solution-grid">
+            <div class="solution-card">
+                <div class="icon">🌐</div>
+                <h3>パソコンだけで今すぐ始められる</h3>
+                <p>「専門知識一切不要！」特別なソフトのインストール・難しい設定一切なし。パソコンでアクセスするだけで今すぐ研修システム開始。</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">📺</div>
+                <h3>お手持ち資料がAIの力で研修に変身</h3>
+                <p>「動画(MP4)・スライド(HTML)+音声(MP3)・資料(PDF)+音声(MP3)に完全対応！」過去に作った資料がAIの力で短期間で研修コンテンツとして蘇ります。<br><span style="font-size: 0.9em; color: #999;">※AI機能は別途APIキー登録が必要です</span></p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">💰</div>
+                <h3>月額4,980円から個人でも始められる</h3>
+                <p>「個人コーチ・講師でも安心！」30名パック4,980円から300名パック39,800円まで。規模の成長に合わせて段階的に最大80%お得に。</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">⚡</div>
+                <h3>簡単ステップで今すぐ使える</h3>
+                <p>「難しいことは一切なし！」パソコンでアクセス→Googleアカウントでログイン→研修開始。難しい設定作業や待ち時間は一切なし。</p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">🎯</div>
+                <h3>AIがテスト問題を自動で作成して採点まで</h3>
+                <p>「理解度チェックが簡単に！」AIがあなたの研修コンテンツを読んでテスト問題を自動作成→自動採点→合否判定まで全てお任せ。<br><span style="font-size: 0.9em; color: #999;">※別途APIキー登録が必要です</span></p>
+            </div>
+            <div class="solution-card">
+                <div class="icon">📊</div>
+                <h3>だれがどこまで進んだか自動でレポート作成</h3>
+                <p>「社員の学習状況を簡単把握！」各社員の研修進捗→AIが分析してレポート作成→管理者はダッシュボードで簡単確認。<br><span style="font-size: 0.9em; color: #999;">※別途APIキー登録が必要です</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="section comparison-section">
+        <h2>📊 他社サービスとの徹底比較</h2>
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>項目</th>
+                        <th>CloudEduPro</th>
+                        <th>一般的なLMS</th>
+                        <th>大手企業向けLMS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>初期費用</strong></td>
+                        <td class="our-system">0円（完全無料）</td>
+                        <td>200万円〜500万円</td>
+                        <td>800万円〜2000万円</td>
+                    </tr>
+                    <tr>
+                        <td><strong>月額運用費</strong></td>
+                        <td class="our-system">9,800円〜59,800円</td>
+                        <td>30万円〜80万円</td>
+                        <td>100万円〜300万円</td>
+                    </tr>
+                    <tr>
+                        <td><strong>年間TCO</strong></td>
+                        <td class="our-system">117,600円〜717,600円</td>
+                        <td>560万円〜1160万円</td>
+                        <td>2000万円〜5600万円</td>
+                    </tr>
+                    <tr>
+                        <td><strong>コンテンツ形式</strong></td>
+                        <td class="our-system">◎ MP4・HTML・PDF対応</td>
+                        <td>△ 動画のみ</td>
+                        <td>○ 動画・一部形式</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AI自動化</strong></td>
+                        <td class="our-system">◎ 問題生成・分析</td>
+                        <td>× なし</td>
+                        <td>△ 高額オプション</td>
+                    </tr>
+                    <tr>
+                        <td><strong>導入期間</strong></td>
+                        <td class="our-system">5分（即日開始）</td>
+                        <td>3〜6ヶ月</td>
+                        <td>6ヶ月〜1年</td>
+                    </tr>
+                    <tr>
+                        <td><strong>セルフサービス</strong></td>
+                        <td class="our-system">◎ 完全自動化</td>
+                        <td>× 有人サポート必要</td>
+                        <td>△ 専任チーム必要</td>
+                    </tr>
+                    <tr>
+                        <td><strong>運用工数</strong></td>
+                        <td class="our-system">◎ ゼロ（無人運営）</td>
+                        <td>△ 手動作業多</td>
+                        <td>○ 専任チーム必要</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section features-section">
+        <h2>🎯 主要機能一覧</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon">🎬</div>
+                <h3>動画研修システム</h3>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>100%視聴判定機能</li>
+                    <li>自動進捗保存（10秒間隔）</li>
+                    <li>フルスクリーン対応</li>
+                    <li>視聴完了通知</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="icon">📊</div>
+                <h3>スライド+音声研修</h3>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>HTML+MP3自動連携</li>
+                    <li>全画面表示機能</li>
+                    <li>速度調整（0.5〜2.0倍）</li>
+                    <li>音声コントロール</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="icon">📄</div>
+                <h3>PDF+音声研修</h3>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>PDF+MP3自動連携</li>
+                    <li>既存資料の有効活用</li>
+                    <li>音声解説付き資料研修</li>
+                    <li>インタラクティブ学習</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="icon">📝</div>
+                <h3>理解度テストシステム</h3>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>自動採点・合否判定</li>
+                    <li>再テスト機能（最大2回）</li>
+                    <li>AI問題自動生成</li>
+                    <li>一括問題登録</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="icon">👥</div>
+                <h3>ユーザー管理</h3>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>自動ユーザー登録</li>
+                    <li>権限管理（管理者/一般）</li>
+                    <li>進捗追跡・分析</li>
+                    <li>Google OAuth認証</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="icon">📈</div>
+                <h3>AI分析ダッシュボード</h3>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>Chart.js統合グラフ</li>
+                    <li>個別学習分析</li>
+                    <li>おすすめ提案機能</li>
+                    <li>研修総評自動生成</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🛠️</div>
+                <h3>管理者機能</h3>
+                <ul style="text-align: left; margin-top: 15px;">
+                    <li>6タブ管理画面</li>
+                    <li>コンテンツ管理</li>
+                    <li>Google Colab連携</li>
+                    <li>設定カスタマイズ</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Common Features Section -->
+    <section class="section" style="background: #f8f9fa; text-align: center; padding: 60px 20px;">
+        <h2 style="font-size: 2.5em; margin-bottom: 40px; color: #333;">🎆 全プラン共通機能</h2>
+        <p style="font-size: 1.2em; margin-bottom: 40px; color: #666;">プランに関係なく、以下の機能を全てご利用いただけます</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+                <div style="font-size: 3em; margin-bottom: 15px;">📺</div>
+                <h3 style="color: #667eea; margin-bottom: 15px;">3形式完全対応</h3>
+                <p style="color: #666;">MP4動画・HTML+音声・PDF+音声の全てに対応。既存資料をそのまま活用可能。</p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+                <div style="font-size: 3em; margin-bottom: 15px;">🤖</div>
+                <h3 style="color: #28a745; margin-bottom: 15px;">AI機能無制限</h3>
+                <p style="color: #666;">お客様のOpenAI APIキー設定で、AI問題生成・学習分析が無制限で利用可能。</p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+                <div style="font-size: 3em; margin-bottom: 15px;">🌐</div>
+                <h3 style="color: #17a2b8; margin-bottom: 15px;">Webブラウザ完結</h3>
+                <p style="color: #666;">ソフトインストール不要。URLアクセスだけで全機能をご利用いただけます。</p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+                <div style="font-size: 3em; margin-bottom: 15px;">🎯</div>
+                <h3 style="color: #ffc107; margin-bottom: 15px;">理解度テスト自動化</h3>
+                <p style="color: #666;">自動採点・合否判定・個別進捗管理まで完全自動化。</p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+                <div style="font-size: 3em; margin-bottom: 15px;">⚡</div>
+                <h3 style="color: #ff6b6b; margin-bottom: 15px;">5分セットアップ</h3>
+                <p style="color: #666;">複雑な初期設定不要。簡単な手順で即日利用開始。</p>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+                <div style="font-size: 3em; margin-bottom: 15px;">📊</div>
+                <h3 style="color: #6f42c1; margin-bottom: 15px;">無制限コンテンツ</h3>
+                <p style="color: #666;">コンテンツ数の制限なし。必要なだけ研修コンテンツを登録可能。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="section pricing-section" id="pricing">
+        <h2>💰 料金プラン - 個人から企業まで対応</h2>
+        <p style="font-size: 1.2em; margin-bottom: 15px;">個人の動画配信・研修会から企業研修まで、幅広いニーズに対応した4段階プラン</p>
+        <p style="font-size: 1em; margin-bottom: 30px; color: #666;">基本価格: 166円/名・月 → 上位プランで段階的に最大22%お得に！</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px;">
+            <div class="pricing-card">
+                <h3>Basicプラン</h3>
+                <div class="price">月額 4,980円</div>
+                <div class="price-note">初期費用なし / 個人・小規模チーム向け</div>
+                <div style="background: #f8f9fa; padding: 15px; margin: 15px 0; border-radius: 8px; font-size: 0.9em;">
+                    <strong>計算:</strong> 166円×30名 = 4,980円<br>
+                    <span style="color: #666;">1名あたり: 166円（基本料金）</span>
+                </div>
+                <ul style="text-align: left; font-size: 0.95em;">
+                    <li>👥 <strong>30名</strong>まで利用可能</li>
+                    <li>💾 <strong>15GBストレージ</strong></li>
+                    <li>🏢 共有workspace環境</li>
+                </ul>
+                <button class="cta-button stripe-checkout-btn" data-plan="basic">
+                    <span class="btn-text">今すぐ始める</span>
+                    <span class="btn-loading" style="display: none;">処理中...</span>
+                </button>
+            </div>
+            <div class="pricing-card">
+                <h3>Standardプラン</h3>
+                <div class="price">月額 7,980円</div>
+                <div class="price-note">初期費用なし / 中小企業向け <span style="color: #28a745; font-weight: bold;">✨ 4%お得</span></div>
+                <div style="background: #e8f5e8; padding: 15px; margin: 15px 0; border-radius: 8px; font-size: 0.9em; border: 1px solid #28a745;">
+                    <strong>計算:</strong> 160円×50名 = 7,980円<br>
+                    <span style="color: #28a745; font-weight: bold;">1名あたり: 160円（4%お得！）</span>
+                </div>
+                <ul style="text-align: left; font-size: 0.95em;">
+                    <li>👥 <strong>50名</strong>まで利用可能</li>
+                    <li>💾 <strong>30GBストレージ</strong></li>
+                    <li>🏢 共有workspace環境</li>
+                    <li>💰 <strong>4%割引適用</strong></li>
+                </ul>
+                <button class="cta-button stripe-checkout-btn" data-plan="standard">
+                    <span class="btn-text">お申し込み</span>
+                    <span class="btn-loading" style="display: none;">処理中...</span>
+                </button>
+            </div>
+            
+            <div class="pricing-card recommended">
+                <h3>Proプラン</h3>
+                <div class="price">月額 14,800円</div>
+                <div class="price-note">初期費用なし / 中規模企業向け <span style="color: #007bff; font-weight: bold;">✨ 11%お得</span></div>
+                <div style="background: #e3f2fd; padding: 15px; margin: 15px 0; border-radius: 8px; font-size: 0.9em; border: 1px solid #007bff;">
+                    <strong>計算:</strong> 148円×100名 = 14,800円<br>
+                    <span style="color: #007bff; font-weight: bold;">1名あたり: 148円（11%お得！）</span>
+                </div>
+                <ul style="text-align: left; font-size: 0.95em;">
+                    <li>👥 <strong>100名</strong>まで利用可能</li>
+                    <li>💾 <strong>50GBストレージ</strong></li>
+                    <li>🏢 共有workspace環境</li>
+                    <li>💰 <strong>11%割引適用</strong></li>
+                </ul>
+                <button class="cta-button stripe-checkout-btn" data-plan="pro">
+                    <span class="btn-text">人気プラン</span>
+                    <span class="btn-loading" style="display: none;">処理中...</span>
+                </button>
+            </div>
+            <div class="pricing-card" style="border: 3px solid #ffd700; position: relative;">
+                <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #ffd700; color: #333; padding: 5px 20px; border-radius: 20px; font-size: 0.9em; font-weight: bold;">Business</div>
+                <h3>Businessプラン</h3>
+                <div class="price">月額 38,800円</div>
+                <div class="price-note">初期費用なし / 大企業向け <span style="color: #ffd700; font-weight: bold;">✨ 22%お得</span></div>
+                <div style="background: #fff3cd; padding: 15px; margin: 15px 0; border-radius: 8px; font-size: 0.9em; border: 1px solid #ffd700;">
+                    <strong>計算:</strong> 129円×300名 = 38,800円<br>
+                    <span style="color: #e67e22; font-weight: bold;">1名あたり: 129円（22%お得！）</span>
+                </div>
+                <ul style="text-align: left; font-size: 0.95em;">
+                    <li>👥 <strong>300名</strong>まで利用可能</li>
+                    <li>💾 <strong>200GB専用ストレージ</strong></li>
+                    <li>🏢 <strong>専用workspace環境</strong></li>
+                    <li>⚡ 優先サポート</li>
+                    <li>📊 高度なレポート機能</li>
+                    <li>🔒 セキュリティ強化</li>
+                    <li>🎨 カスタムブランディング</li>
+                </ul>
+                <button class="cta-button stripe-checkout-btn" data-plan="business" style="background: linear-gradient(45deg, #ffd700, #ffed4e); border: none;">
+                    <span class="btn-text">Business申込</span>
+                    <span class="btn-loading" style="display: none;">処理中...</span>
+                </button>
+            </div>
+        </div>
+        <div style="margin-top: 40px; font-size: 1.1em; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 10px;">
+            <p>💡 <strong>従来システムとの圧倒的なコスト差</strong></p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; text-align: left;">
+                <div>
+                    <h4 style="color: #ff6b6b; margin-bottom: 10px;">❌ 従来システム（年間）</h4>
+                    <p>• 初期費用：200〜800万円</p>
+                    <p>• 月額費用：30〜150万円</p>
+                    <p style="font-weight: bold; color: #ff6b6b;">年間総額：5,600,000円〜26,000,000円</p>
+                </div>
+                <div>
+                    <h4 style="color: #4caf50; margin-bottom: 10px;">✅ CloudEduPro（年間）</h4>
+                    <p>• 初期費用：0円（完全無料）</p>
+                    <p>• 月額費用：4,980円〜39,800円</p>
+                    <p style="font-weight: bold; color: #4caf50;">年間総額：59,760円〜477,600円</p>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 20px; font-size: 1.2em; font-weight: bold; color: #fff;">
+                🎯 最大<span style="color: #ff6b6b; font-size: 1.3em;">98%のコスト削減</span>を実現！
+            </p>
+        </div>
+        
+        <!-- Pricing Formula Explanation -->
+        <div style="margin-top: 40px; font-size: 1.1em; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 10px;">
+            <p style="text-align: center; margin-bottom: 25px;">📋 <strong>スモールスタート重視の料金設計</strong></p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left;">
+                <div>
+                    <h4 style="color: #4caf50; margin-bottom: 15px;">📊 4段階パック料金設定</h4>
+                    <p>• <strong>スタータープラン:</strong> 166円/名（基本料金）</p>
+                    <p>• <strong>30名パック:</strong> 288円/名（5%お得）</p>
+                    <p>• <strong>50名パック:</strong> 285円/名（10%お得）</p>
+                    <p>• <strong>100名パック:</strong> 258円/名（15%お得・最上位）</p>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #ccc;">10名〜100名の現実的な企業規模に最適化</p>
+                </div>
+                <div>
+                    <h4 style="color: #ffd700; margin-bottom: 15px;">🎯 個人・小規模からのメリット</h4>
+                    <p>• <strong>低リスク</strong>で動画配信・研修を開始</p>
+                    <p>• <strong>個人コーチ・講師</strong>でも気軽に導入</p>
+                    <p>• <strong>受講者の反応</strong>を見ながら拡張</p>
+                    <p>• <strong>現実的な価格帯</strong>で継続利用</p>
+                    <p>• <strong>段階的成長</strong>に合わせたアップグレード</p>
+                    <p>• <strong>15%割引</strong>が最大お得率</p>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 20px; font-size: 1.1em; color: #fff;">
+                💡 <strong>個人から企業まで、あらゆる規模の成長</strong>に最適化された料金設計
+            </p>
+        </div>
+    </section>
+
+    <!-- Optional Services Section -->
+    <section class="section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 60px 20px;">
+        <h2 style="font-size: 2.5em; margin-bottom: 40px;">🎨 オプションサービス</h2>
+        <p style="font-size: 1.2em; margin-bottom: 40px;">更なる効率化をお求めの企業様向けの追加サービス</p>
+        
+        <div style="max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(5px);">
+            <div style="font-size: 3em; margin-bottom: 20px;">📁</div>
+            <h3 style="font-size: 2em; margin-bottom: 20px;">コンテンツ一括登録代行</h3>
+            <div style="font-size: 1.5em; font-weight: bold; margin-bottom: 20px; color: #ff6b6b;">
+                1回 3,000円
+            </div>
+            
+            <div style="text-align: left; margin: 30px 0;">
+                <h4 style="font-size: 1.3em; margin-bottom: 15px; color: #fff;">🚀 このサービスでできること：</h4>
+                <ul style="font-size: 1.1em; line-height: 1.8;">
+                    <li>✅ Google Driveの動画・HTML・PDFファイルを自動分析</li>
+                    <li>✅ コンテンツ情報の自動抽出・分類</li>
+                    <li>✅ システムへの一括登録（数百ファイルも対応）</li>
+                    <li>✅ 音声ファイルとの自動マッチング</li>
+                    <li>✅ メタデータ・再生時間の自動設定</li>
+                </ul>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <p style="font-size: 1.1em; line-height: 1.6;">
+                    <strong>💡 手動なら数日かかる作業が30分で完了！</strong><br>
+                    たくさんのファイルを1つずつ登録するのは大変ですよね。
+                    専門スタッフが一括で登録作業を代行いたします。
+                </p>
+            </div>
+            
+            <a href="#contact" style="background: #ff6b6b; color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-size: 1.2em; font-weight: bold; display: inline-block; margin-top: 20px; transition: all 0.3s ease;">
+                一括登録を依頼する
+            </a>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section testimonial-section">
+        <h2>🗣️ お客様の声</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <p>「個人コーチとしてスタータープランで月額4,980円から始めて、今はプロプラン。パソコンだけで操作できるので、いつでもどこでも簡単に使えます。今まで作ったPDF資料がそのまま研修に使えるようになったのは驚きでした。」</p>
+                <div style="margin-top: 20px; font-weight: bold;">
+                    - 個人ビジネスコーチ様（受講者30名・50名パック）
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p>「AIがテスト問題を自動で作ってくれるので、テスト作成の手間が90%減りました。5分でセットアップできるのは本当でした。パソコンだけで全て操作でき、今まで作ったスライドやPDF資料を活用できるので非常に便利です。年間コストは従来の20分の1です。」</p>
+                <div style="margin-top: 20px; font-weight: bold;">
+                    - 製造業 人事部長様（従業員70名・100名パック）
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p>「100名パックで80名が利用中。ファイル一括登録サービスで100個のファイルが30分で設定完了。パソコンだけで管理できるので、いつでもどこからでも自分のペースで運用できるのが最高です。15%割引で1名258円は本当にお得ですね。」</p>
+                <div style="margin-top: 20px; font-weight: bold;">
+                    - 中堅IT企業 研修責任者様（従業員80名・100名パック）
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section faq-section">
+        <h2>❓ よくある質問</h2>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                なぜ月額4,980円からという低価格を実現できるのですか？
+            </div>
+            <div class="faq-answer">
+                Googleの無料サービスを活用した独自の仕組みにより、サーバー運用コストをほぼゼロに削減。パソコンだけで使えるシンプル設計により、従来システムの98%削減を実現しています。
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                パソコンだけで本当に全ての操作ができますか？
+            </div>
+            <div class="faq-answer">
+                はい。特別なソフトのインストールや難しい設定は一切不要です。パソコンでアクセスするだけで、研修コンテンツの登録・社員管理・進捗確認・レポート作成まで全てできます。簡単な操作で、初めてでもすぐに使えます。
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                MP4・HTML・PDFの3形式に対応とありますが、どんな使い方ができますか？
+            </div>
+            <div class="faq-answer">
+                MP4は従来の動画研修、HTML+音声はインタラクティブなスライド研修、PDF+音声は資料解説研修に最適。既にお持ちの資料をそのまま研修コンテンツとして活用でき、新しいコンテンツを作る手間を省けます。
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                AI機能を使うには追加費用がかかりますか？
+            </div>
+            <div class="faq-answer">
+                AI機能をご利用いただくには、お客様ご自身でOpenAI APIキーを取得・設定していただく必要があります。設定後は全プランで無制限にAI問題生成・学習分析をご利用いただけます。API利用料金はお客様のOpenAIアカウントに直接課金されるため、透明性が高く安心です。
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                OpenAI APIキーの設定は簡単ですか？
+            </div>
+            <div class="faq-answer">
+                はい。OpenAIアカウント作成→APIキー取得→CloudEduProの設定画面で入力するだけの3ステップです。詳しい設定手順もパソコン上でご確認いただけます。一度設定すれば、AI問題生成・学習分析が無制限でご利用いただけます。<br><span style="font-size: 0.9em; color: #666;">※API利用料金はお客様のOpenAIアカウントに直接課金されます</span>
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                本当に5分でセットアップできますか？
+            </div>
+            <div class="faq-answer">
+                はい。URLアクセス→Googleログイン→プラン選択→決済で完了。複雑な初期設定や専門知識は一切不要。簡単な手順ですぐに研修システムをお使いいただけます。
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                初期費用が無料ということですが、本当に追加費用はありませんか？
+            </div>
+            <div class="faq-answer">
+                月額料金以外は一切不要です。セットアップ費・導入費・設定費・カスタマイズ費などの隠れコストは完全にゼロ。オプションのファイル一括登録代行（3,000円/回）のみ別料金です。<br><span style="font-size: 0.9em; color: #666;">※AI機能をご利用の場合は、別途OpenAI APIキーの登録と利用料金が必要です</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="hero" style="padding: 60px 20px;" id="contact">
+        <div class="hero-content">
+            <h2>🚀 今すぐWebブラウザで始めて、研修コストを98%削減しませんか？</h2>
+            <p style="font-size: 1.2em; margin: 20px 0;">
+                複雑な設定不要 - URLアクセスだけで即日研修開始
+            </p>
+            <a href="#pricing" class="cta-button">
+                🎯 今すぐ無料体験を始める
+            </a>
+            <a href="#pricing" class="cta-button cta-secondary">
+                📊 料金プランを確認する
+            </a>
+            <div style="margin-top: 30px; font-size: 1.1em; background: rgba(255,255,255,0.2); padding: 20px; border-radius: 10px;">
+                <p><strong>✅ Webブラウザだけで完結</strong> - 複雑な設定一切なし</p>
+                <p><strong>✅ 初期費用ゼロ</strong> - 隠れコスト完全なし</p>
+                <p><strong>✅ いつでもどこでも利用可能</strong> - 24時間アクセス可能</p>
+                <p><strong>✅ 即日開始</strong> - 待ち時間ゼロで研修スタート</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 CloudEduPro. All rights reserved.</p>
+        <div class="contact-info">
+            <p>📧 info@cloudedu-pro.com | 📞 03-1234-5678</p>
+            <p>🏢 東京都渋谷区○○ ○○ビル○F</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            const isOpen = answer.style.display === 'block';
+            
+            // Close all FAQ items
+            document.querySelectorAll('.faq-answer').forEach(item => {
+                item.style.display = 'none';
+            });
+            
+            document.querySelectorAll('.faq-question').forEach(item => {
+                item.querySelector('::after') || (item.style.transform = 'none');
+            });
+            
+            if (!isOpen) {
+                answer.style.display = 'block';
+            }
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // =================
+        // Stripe決済統合
+        // =================
+        
+        // ⚠️ 本番環境では公開可能キー（pk_live_xxx）に変更してください
+        const stripe = Stripe('pk_test_51RqV2K1sQgfb3JBbNwhBQ7Nn09xbvc1VnvS99iHv3QOrK3wn3YhI7Z5Z6FBMqArWZGmse2JTz8O2ypVIyJzCXW6800OiWDUISF'); // テスト用公開キー
+        
+        // プラン別Price ID設定（Stripeダッシュボードで作成）
+        const STRIPE_PLANS = {
+            basic: {
+                priceId: 'price_1RqVTd1sQgfb3JBb3Bro4VaZ', // Basic プラン Price ID
+                name: 'Basicプラン',
+                price: '4,980円'
+            },
+            standard: {
+                priceId: 'price_1RqVV11sQgfb3JBbGA1OCc6h', // Standard プラン Price ID
+                name: 'Standardプラン',
+                price: '7,980円'
+            },
+            pro: {
+                priceId: 'price_1RqVev1sQgfb3JBb6sz9vo1V', // Pro プラン Price ID
+                name: 'Proプラン', 
+                price: '14,800円'
+            },
+            business: {
+                priceId: 'price_1RqVmh1sQgfb3JBb4zh7y4j4', // Business プラン Price ID
+                name: 'Businessプラン',
+                price: '38,800円'
+            }
+        };
+
+        // 決済ボタンのクリックイベント
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkoutButtons = document.querySelectorAll('.stripe-checkout-btn');
+            
+            checkoutButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const planType = this.getAttribute('data-plan');
+                    const plan = STRIPE_PLANS[planType];
+                    
+                    if (!plan) {
+                        alert('プランの設定にエラーがあります。しばらく後でお試しください。');
+                        return;
+                    }
+                    
+                    // ローディング表示
+                    showLoading(this);
+                    
+                    // Stripe Checkoutへリダイレクト
+                    stripe.redirectToCheckout({
+                        lineItems: [{
+                            price: plan.priceId,
+                            quantity: 1,
+                        }],
+                        mode: 'subscription', // 月額サブスクリプション
+                        successUrl: window.location.origin + '/success.html?plan=' + planType,
+                        cancelUrl: window.location.origin + '/sales.html?canceled=true',
+                        allowPromotionCodes: true, // プロモーションコード対応
+                        billingAddressCollection: 'required', // 請求先住所必須
+                    }).then(function(result) {
+                        // エラーが発生した場合の処理
+                        if (result.error) {
+                            hideLoading(button);
+                            alert('決済の開始に失敗しました: ' + result.error.message);
+                        }
+                    });
+                });
+            });
+        });
+
+        // ローディング表示
+        function showLoading(button) {
+            const btnText = button.querySelector('.btn-text');
+            const btnLoading = button.querySelector('.btn-loading');
+            
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            button.disabled = true;
+            button.style.opacity = '0.7';
+            button.style.cursor = 'not-allowed';
+        }
+
+        // ローディング非表示
+        function hideLoading(button) {
+            const btnText = button.querySelector('.btn-text');
+            const btnLoading = button.querySelector('.btn-loading');
+            
+            btnText.style.display = 'inline';
+            btnLoading.style.display = 'none';
+            button.disabled = false;
+            button.style.opacity = '1';
+            button.style.cursor = 'pointer';
+        }
+
+        // キャンセル時のメッセージ表示
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('canceled') === 'true') {
+                // キャンセル時のメッセージを表示
+                const message = document.createElement('div');
+                message.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #ff6b6b;
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    font-weight: bold;
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease-out;
+                `;
+                message.innerHTML = '💳 決済がキャンセルされました。ご不明な点がございましたらお気軽にお問い合わせください。';
+                document.body.appendChild(message);
+                
+                // 5秒後に非表示
+                setTimeout(() => {
+                    message.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(() => message.remove(), 300);
+                }, 5000);
+            }
+        });
+    </script>
+
+    <!-- アニメーション用CSS -->
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
+        }
+        
+        .stripe-checkout-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .stripe-checkout-btn:disabled {
+            cursor: not-allowed !important;
+        }
+    </style>
+</body>
+</html>
