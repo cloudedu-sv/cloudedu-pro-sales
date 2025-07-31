@@ -1123,7 +1123,6 @@
                         mode: 'subscription', // 月額サブスクリプション
                         successUrl: window.location.href.replace('/sales.html', '/success.html') + '?plan=' + planType,
                         cancelUrl: window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'canceled=true',
-                        allowPromotionCodes: true, // プロモーションコード対応
                     }).then(function(result) {
                         // エラーが発生した場合の処理
                         if (result.error) {
